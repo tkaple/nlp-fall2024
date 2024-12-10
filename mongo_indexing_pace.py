@@ -1,15 +1,19 @@
 from pymongo.mongo_client import MongoClient
 import json
+import os
 
 uri = "mongodb://localhost:27017/"
 client = MongoClient(uri)
 db = client['wikidata_json']
-collection = db['businessperson']
-gt_user = "adeshpande322"
+occupation = "politician"
+collection = db[occupation]
+gt_user = "<YOUR GT USERNAME>" # ADD GT USERNAME HERE
 
-parent_dir = "/home/hice1/"+gt_user+"/scratch/NL_Project/Data/English_Labelled_Wikidata_businessperson/"
+parent_dir = "/home/hice1/"+gt_user+"/scratch/NL_Project/Data/English_Labelled_Wikidata_"+occupation
 
-for i in range(1, 5):
+len_files = len([name for name in os.listdir(parent_dir) if os.path.isfile(name)])
+
+for i in range(1, len_files+1):
     with open(parent_dir+"en_labelled_part"+ str(i)+".json") as f:
         data = json.load(f)
         print("Loaded JSON file for Part " + str(i))
@@ -24,6 +28,7 @@ print("Creating Index based on Given name")
 collection.create_index("given name")
 collection.create_index("Commons category")
 
+# Test retrieval for the collection
 results = collection.find({"given name": "John"})
 for result in results:
     print(result)
